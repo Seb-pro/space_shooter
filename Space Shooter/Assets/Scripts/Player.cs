@@ -2,7 +2,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float speed;
+    [SerializeField] private float _speed;
+    [SerializeField] private GameObject _laserPrefab;
+    [SerializeField] private float _fireRate;
+    [SerializeField] private float _canFire;
 
     private Camera mainCamera;
     void Start()
@@ -15,6 +18,11 @@ public class Player : MonoBehaviour
     {
         Movement();
         KeepPlayerOnScreen();
+        
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
+        {
+            ShootLaser();
+        }
     }
 
     private void Movement()
@@ -24,7 +32,7 @@ public class Player : MonoBehaviour
 
         Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
 
-        transform.Translate(direction * speed * Time.deltaTime);
+        transform.Translate(direction * _speed * Time.deltaTime);
     }
 
     private void KeepPlayerOnScreen()
@@ -41,5 +49,11 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(11.3f, transform.position.y, 0);
         }
 
+    }
+
+    private void ShootLaser()
+    {
+        _canFire = Time.time + _fireRate;
+        Instantiate(_laserPrefab, transform.position + new Vector3(0, 0.8f, 0), Quaternion.identity);
     }
 }
